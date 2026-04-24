@@ -14,40 +14,59 @@ Total de palabras: 1,240
      - unprecedented: 3
      - paradigm shift: 2
      - seamless integration: 2
+     - furthermore: 2
      - cornerstone: 1
      - delve: 1
-     - furthermore: 1
      - gold standard: 1
-     - in conclusion: 1
+     - underscore: 1
 
-2. REDUNDANCIA INTERNA
-   2 pares con similitud >= 0.7
-     - P3 ~ P8: 0.812
-     - P5 ~ P11: 0.741
+2. REDUNDANCIA SEMÁNTICA (TF-IDF + cosine)
+   2 pares con similitud >= 0.5
+     - P3 ~ P8: 0.612
+     - P5 ~ P11: 0.541
 
-3. VERIFICACIÓN DE CITAS (CrossRef)
-   DOIs detectados: 4
-   Verificadas: 3/4
-     [OK ] 10.1038/s41586-023-12345-6
-            A fictitious landmark study on pulmonary fibrosis mechanisms
-     [OK ] 10.1016/j.cell.2024.01.001
-            Another fictitious paper on lung organoids
-     [OK ] 10.1126/sciadv.abc1234
-            Single-cell atlas of fictitious alveolar epithelium
-     [XX ] 10.9999/invented.2025.fake
+3a. VERIFICACIÓN DE DOIs (CrossRef /works/{doi})
+    DOIs detectados: 4
+    Verificados: 3/4
+      [OK ] 10.1038/s41586-023-12345-6
+             A fictitious landmark study on pulmonary fibrosis mechanisms
+      [OK ] 10.1016/j.cell.2024.01.001
+             Another fictitious paper on lung organoids
+      [OK ] 10.1126/sciadv.abc1234
+             Single-cell atlas of fictitious alveolar epithelium
+      [XX ] 10.9999/invented.2025.fake
+
+3b. VERIFICACIÓN DE CITAS AUTOR-AÑO (CrossRef search)
+    Citas autor-año detectadas: 6
+    Encontradas en CrossRef: 6/6
+    Con apellido coincidente: 4
+    Detalle:
+      [OK ] Smith et al., 2023
+      [OK ] Jones and Lee, 2022
+      [?? ] Zhang et al., 2024
+             -> El primer autor real es "Wu", pero la cita dice "Zhang".
+                Posible atribución incorrecta o match ambiguo en CrossRef.
+      [OK ] Kumar et al., 2021
+      [?? ] Selman et al., 2008
+             -> El primer autor real es "Delale", pero la cita dice "Selman".
+                Posible atribución incorrecta o match ambiguo en CrossRef.
+      [OK ] Huh et al., 2010
 
 ============================================================
 
 INTERPRETACIÓN DEL REPORTE
 ---------------------------
 Este es un ejemplo de salida sobre un texto ficticio diseñado
-para activar las tres señales:
+para activar las cuatro señales del toolkit:
 
-1. Densidad 14.52/1000 → ALTA. Sobre el umbral de 8.0.
-2. Dos pares de párrafos redundantes → edición descuidada.
-3. 1 de 4 DOIs no verificable → posible cita alucinada.
+1. Densidad 14.52/1000 → ALTA. Muy por encima del umbral 8.0.
+2. Dos pares de párrafos redundantes → mismo tema reformulado.
+3a. 1 de 4 DOIs no verificable → cita alucinada probable.
+3b. 2 de 6 citas autor-año marcadas [??] → revisar manualmente
+    en PubMed; pueden ser atribuciones incorrectas (error
+    real del autor) o falsos positivos por apellidos comunes.
 
-Cuando ves las tres señales juntas en un documento real, la
-evidencia combinada es fuerte. Reporta los hallazgos como
-hechos verificables (DOI inexistente, párrafos duplicados)
-y usa la densidad como señal complementaria.
+Cuando varias señales coinciden, la evidencia se refuerza.
+Reporta los hallazgos verificables (DOI inexistente, párrafos
+duplicados, citas cuyo primer autor no coincide) como hechos;
+usa la densidad como señal complementaria.

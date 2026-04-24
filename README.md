@@ -5,8 +5,10 @@ Kit de herramientas para evaluar la autenticidad, originalidad y posible asisten
 ## ¿Qué hace?
 
 - **Señales de contenido generado por LLM**: densidad de vocabulario marcador (*unprecedented*, *paradigm shift*, *bridge the gap*, etc.) por cada 1000 palabras, con interpretación automática.
-- **Redundancia interna**: detecta párrafos duplicados o muy similares dentro del mismo documento (patrón típico de edición descuidada post-generación).
-- **Verificación de citas**: extrae DOIs del texto y los consulta contra la API pública de CrossRef (gratis, sin API key) para confirmar que existan y coincidan con los metadatos declarados.
+- **Redundancia semántica** (TF-IDF + cosine): detecta párrafos duplicados o reformulaciones con vocabulario compartido dentro del mismo documento (patrón típico de edición descuidada post-generación).
+- **Verificación de citas en dos modalidades**:
+  - **DOIs explícitos** → CrossRef `/works/{doi}` para confirmar existencia y metadatos.
+  - **Citas autor-año** `(Autor et al., AÑO)` → CrossRef search con keywords del contexto para detectar citas alucinadas o mal atribuidas.
 - **Estadísticas generales**: conteo de palabras, distribución de marcadores, pares redundantes.
 
 ## Filosofía
@@ -49,7 +51,8 @@ text-authenticity-toolkit/
 
 - Python 3.9+
 - [`requests`](https://pypi.org/project/requests/) — cliente HTTP para la API de CrossRef
-- [CrossRef API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) — verificación de DOIs (pública, sin API key)
+- [`scikit-learn`](https://pypi.org/project/scikit-learn/) — TF-IDF y similitud coseno para detección de redundancia
+- [CrossRef API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) — verificación de DOIs y búsqueda autor-año (pública, sin API key)
 
 ## Cómo usarlo
 
@@ -94,8 +97,10 @@ Toolkit for evaluating authenticity, originality, and possible AI-assistance in 
 ### What it does
 
 - **LLM-generated content signals**: density of marker vocabulary (*unprecedented*, *paradigm shift*, *bridge the gap*, etc.) per 1000 words, with automatic interpretation.
-- **Internal redundancy**: detects duplicated or very similar paragraphs within the same document (typical pattern of careless post-generation editing).
-- **Citation verification**: extracts DOIs and queries CrossRef's public API (free, no API key) to confirm they exist and match declared metadata.
+- **Semantic redundancy** (TF-IDF + cosine): detects duplicated paragraphs or reformulations sharing vocabulary within the same document (typical pattern of careless post-generation editing).
+- **Citation verification in two modalities**:
+  - **Explicit DOIs** → CrossRef `/works/{doi}` to confirm existence and metadata.
+  - **Author-year citations** `(Author et al., YEAR)` → CrossRef search with context keywords to detect hallucinated or misattributed references.
 - **General statistics**: word count, marker distribution, redundant pairs.
 
 ### Philosophy

@@ -38,41 +38,65 @@ ANÁLISIS DE AUTENTICIDAD — data/raw/manuscrito.txt
 ============================================================
 
 Idioma analizado: en
-Total de palabras: 8,432
+Total de palabras: 3,678
 
 1. DENSIDAD DE MARCADORES LLM
-   Densidad: 11.58 por 1000 palabras
+   Densidad: 13.32 por 1000 palabras
    Interpretación: ALTA — indicio fuerte de asistencia por LLM
    Top marcadores:
-     - unprecedented: 5
-     - bridge the gap: 7
-     - transformative: 4
-     - paradigm shift: 3
+     - furthermore: 7
+     - synergy: 5
+     - unprecedented: 4
      ...
 
-2. REDUNDANCIA INTERNA
-   3 pares con similitud >= 0.7
-     - P4 ~ P17: 0.847
-     - P12 ~ P23: 0.731
-     ...
+2. REDUNDANCIA SEMÁNTICA (TF-IDF + cosine)
+   Sin redundancia significativa detectada
 
-3. VERIFICACIÓN DE CITAS (CrossRef)
-   DOIs detectados: 17
-   Verificadas: 10/17
-     [OK ] 10.1186/s12931-025-03340-4
-            Phase 2 clinical trial of PIPE-791 in pulmonary fibrosis
-     [XX ] 10.9999/inexistente.2025
-     ...
+3a. VERIFICACIÓN DE DOIs (CrossRef /works/{doi})
+    DOIs detectados: 0
+
+3b. VERIFICACIÓN DE CITAS AUTOR-AÑO (CrossRef search)
+    Citas autor-año detectadas: 26
+    Encontradas en CrossRef: 26/26
+    Con apellido coincidente: 20
+    Detalle:
+      [OK ] Aggarwal et al., 2025
+      [OK ] Alsafadi et al., 2020
+      [?? ] Zhang et al., 2023
+             -> El primer autor real es "Wu", pero la cita dice "Zhang".
+                Posible atribución incorrecta o match ambiguo en CrossRef.
+      ...
 ```
+
+### Cómo leer las verificaciones de citas
+
+| Marca | Significado | Acción recomendada |
+|---|---|---|
+| `[OK ]` | CrossRef encontró un paper con el apellido citado como primer autor en el año citado. | Confiar, pero ojo: un match por apellido+año no confirma que la cita sea **la correcta** — un autor puede tener varios papers en el mismo año. |
+| `[?? ]` | CrossRef devolvió un paper pero el primer autor no coincide con el citado. | **Revisar manualmente en PubMed/Google Scholar.** Puede ser atribución incorrecta real o un falso positivo si el apellido es común. |
+| `[XX ]` | CrossRef no encontró ningún paper con ese autor+año. | **Alta probabilidad de cita alucinada** o publicación en un venue no indexado (preprint pre-DOI, libro, patente). |
 
 ## Opciones del CLI
 
 | Opción | Descripción |
 |---|---|
-| `--idioma en` / `--idioma es` | Idioma del texto. Default `en`. Cambia el vocabulario marcador usado. |
+| `--idioma en` / `--idioma es` | Idioma del texto. Default `en`. Cambia el vocabulario marcador y las stop-words del TF-IDF. |
 | `--json` | Salida en JSON en lugar del formato legible. Útil para pipelines. |
-| `--sin-citas` | Salta la verificación contra CrossRef. Mucho más rápido. |
+| `--sin-citas` | Salta TODA verificación contra CrossRef (DOIs y autor-año). Mucho más rápido. |
+| `--sin-citas-texto` | Salta solo la verificación autor-año; los DOIs sí se verifican. |
 | `--max-citas N` | Máximo de DOIs a verificar (default 20). Cada verificación es una llamada HTTP. |
+| `--max-citas-texto N` | Máximo de citas autor-año a verificar (default 30). |
+
+### Variable de entorno
+
+| Variable | Descripción |
+|---|---|
+| `CROSSREF_MAILTO` | Email para el header User-Agent de CrossRef. Default `toolkit-user@example.com`. Configúralo con tu email real: ayuda a que CrossRef te contacte si hay problemas de uso. |
+
+```bash
+export CROSSREF_MAILTO="tu@correo.com"
+python scripts/analizar_texto.py data/raw/manuscrito.txt
+```
 
 ## Casos de uso comunes
 
@@ -127,7 +151,7 @@ MARCADORES_EN += [
 ```python
 UMBRAL_DENSIDAD_BAJA = 3.0       # marcadores / 1000 palabras
 UMBRAL_DENSIDAD_ALTA = 8.0
-UMBRAL_SIMILITUD_PARRAFOS = 0.7  # 0-1
+UMBRAL_SIMILITUD_PARRAFOS = 0.5  # similitud coseno TF-IDF, 0-1
 ```
 
 En campos con estilo típicamente más elaborado (humanidades, review papers), sube los umbrales. En textos experimentales primarios (methods, results), bájalos.
