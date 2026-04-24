@@ -1,0 +1,45 @@
+# Datos y resultados — nunca versionar material sensible de terceros
+# Conservamos la estructura de directorios con .gitkeep pero ignoramos su contenido
+data/**
+!data/
+!data/raw/
+!data/processed/
+!data/**/.gitkeep
+results/**
+!results/
+!results/.gitkeep
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# R
+.Rproj.user
+.RData
+.Rhistory
+*_cache/
+*_files/
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Reportes intermedios
+*.log
+*.tmp

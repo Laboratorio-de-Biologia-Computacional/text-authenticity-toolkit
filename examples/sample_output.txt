@@ -1,0 +1,53 @@
+============================================================
+ANÁLISIS DE AUTENTICIDAD — data/raw/ejemplo_ficticio.txt
+============================================================
+
+Idioma analizado: en
+Total de palabras: 1,240
+
+1. DENSIDAD DE MARCADORES LLM
+   Densidad: 14.52 por 1000 palabras
+   Interpretación: ALTA — indicio fuerte de asistencia por LLM
+   Top marcadores:
+     - bridge the gap: 4
+     - transformative: 3
+     - unprecedented: 3
+     - paradigm shift: 2
+     - seamless integration: 2
+     - cornerstone: 1
+     - delve: 1
+     - furthermore: 1
+     - gold standard: 1
+     - in conclusion: 1
+
+2. REDUNDANCIA INTERNA
+   2 pares con similitud >= 0.7
+     - P3 ~ P8: 0.812
+     - P5 ~ P11: 0.741
+
+3. VERIFICACIÓN DE CITAS (CrossRef)
+   DOIs detectados: 4
+   Verificadas: 3/4
+     [OK ] 10.1038/s41586-023-12345-6
+            A fictitious landmark study on pulmonary fibrosis mechanisms
+     [OK ] 10.1016/j.cell.2024.01.001
+            Another fictitious paper on lung organoids
+     [OK ] 10.1126/sciadv.abc1234
+            Single-cell atlas of fictitious alveolar epithelium
+     [XX ] 10.9999/invented.2025.fake
+
+============================================================
+
+INTERPRETACIÓN DEL REPORTE
+---------------------------
+Este es un ejemplo de salida sobre un texto ficticio diseñado
+para activar las tres señales:
+
+1. Densidad 14.52/1000 → ALTA. Sobre el umbral de 8.0.
+2. Dos pares de párrafos redundantes → edición descuidada.
+3. 1 de 4 DOIs no verificable → posible cita alucinada.
+
+Cuando ves las tres señales juntas en un documento real, la
+evidencia combinada es fuerte. Reporta los hallazgos como
+hechos verificables (DOI inexistente, párrafos duplicados)
+y usa la densidad como señal complementaria.
